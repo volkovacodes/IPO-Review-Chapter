@@ -1,0 +1,12 @@
+This folder contains data, files and scripts pulled from SDC.
+________________________________________________________________________________ 
+Step 1. Pull data from SDC
+On the first step data on all US new issuance is extracted. 
+Datafile (all_US_IPOs_1970_2015_before_cleaning.csv) is generate as an outcome of "SDC report1.rpt"
+
+- Potential problem with SDC that pulling only offering of "common shares" excludes valid observations from the request. Some IPOs are coded as "class A common shares" or "ordinary shares" and filtering our only common shares would drop out these observations from output.
+
+- Accounting for all classes of securities give 3x of results and SDC could not generate reports for 40,000 observations and > 10 variables at the same time. So the process should go in two phases. On the first phase all IPOs are pulled from SDC with the most essential variables. The extra observations should be dropped. And on the second phase all variables should be pulled in SDC report.
+________________________________________________________________________________
+Step 2. Clean initial SDC request
+
