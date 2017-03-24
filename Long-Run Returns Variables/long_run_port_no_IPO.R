@@ -1,5 +1,5 @@
 require(data.table)
-
+dir <- "./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/"
 ### get CRSP info
 get_crsp <- function(year)
 {
@@ -83,10 +83,11 @@ for(year in 1970:2015)
   links <- get_links()
   
   ### explude IPOs
-  #require(bit64)
-  #ipo <- fread("./IPO review chapter/Chapter write up/SDC-PULL-IPO/ipo_seo_permno.csv")
-  #exclude_permnos <- ipo$Permno[year - ipo$Year <= 5]
-  #crsp <- crsp[!PERMNO %in% exclude_permnos]
+  require(bit64)
+  ipo <- fread("./IPO review chapter/Chapter write up/SDC-PULL-IPO/ipo_seo_permno.csv")
+  exclude_permnos <- ipo$Permno[year - ipo$Year <= 5]
+  exclude_permnos <- exclude_permnos[!is.na(exclude_permnos)]
+  crsp <- crsp[!PERMNO %in% exclude_permnos]
   
   ### matching gvkey to CRSP
   crsp$GVKEY <- links$gvkey[match(crsp$PERMNO, links$lpermno)]
@@ -99,12 +100,13 @@ for(year in 1970:2015)
   crsp_ranks <- get_port_rank(crsp)
   crsp$size_port <- crsp_ranks$size_port[match(crsp$PERMNO, crsp_ranks$PERMNO)]
   crsp$size_BM_port <- crsp_ranks$size_BM_port[match(crsp$PERMNO, crsp_ranks$PERMNO)]
+  crsp$wsize <- crsp_ranks$size[match(crsp$PERMNO, crsp_ranks$PERMNO)]
   
   require(stats)
   crsp <- crsp[, RET := as.numeric(as.character(RET))]
   crsp <- crsp[!is.na(RET)]
-  crsp[, size_ret := weighted.mean(RET,size), by = c("DATE", "size_port")]
-  crsp[, size_BM_ret := weighted.mean(RET,size), by = c("DATE", "size_BM_port")]
+  crsp[, size_ret := weighted.mean(RET,wsize), by = c("DATE", "size_port")]
+  crsp[, size_BM_ret := weighted.mean(RET,wsize), by = c("DATE", "size_BM_port")]
   
   head(crsp)
   crsp[, size_date := paste(size_port, DATE)]
@@ -113,45 +115,45 @@ for(year in 1970:2015)
   crsp[, size_BM_date := paste(size_BM_port, DATE)]
   size_BM_ret <- crsp[!duplicated(size_BM_date) & !is.na(size_BM_port), size_BM_ret, by = size_BM_date]
   
-  write.csv(size_ret, paste0("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_Ret_", year, ".csv"), row.names = F)
-  write.csv(size_BM_ret, paste0("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_BM_Ret_", year, ".csv"), row.names = F)
+  write.csv(size_ret, paste0(dir, "Size_Ret_EX_IPO_SEO_", year, ".csv"), row.names = F)
+  write.csv(size_BM_ret, paste0(dir, "Size_BM_Ret_EX_IPO_SEO_", year, ".csv"), row.names = F)
   
   quantile_size <- crsp_ranks[, list(min_size = min(size)), by = size_port]
   quantile_size$year <- year
   quantile_BM <- crsp_ranks[, list(min_BM = min(BM)), by = BM5]
   quantile_BM$year <- year
   
-  write.csv(quantile_size, paste0("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_quant_", year, ".csv"), row.names = F)
-  write.csv(quantile_BM, paste0("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/BM_quant_", year, ".csv"), row.names = F)
+  write.csv(quantile_size, paste0(dir,"Size_quant_EX_IPO_SEO_", year, ".csv"), row.names = F)
+  write.csv(quantile_BM, paste0(dir, "BM_quant_EX_IPO_SEO_", year, ".csv"), row.names = F)
 }
 
-files <- list.files("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/")
-files <- paste0("./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/", files)
+files <- list.files(dir)
+files <- paste0(dir, files)
 
-files_size_ret <- files[grep("Size_Ret_", files)]
+files_size_ret <- files[grepl("Size_Ret_EX_IPO_SEO_", files)]
 df <- NULL
 for(fl in files_size_ret) df <- rbind(df, fread(fl))
 
-write.csv(df, "./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_Ret.csv", row.names = F)
+write.csv(df, paste0(dir, "Size_Ret_EX_IPO_SEO.csv"), row.names = F)
 file.remove(files_size_ret)
 
-files_size_BM_ret <- files[grep("Size_BM_Ret_", files)]
+files_size_BM_ret <- files[grep("Size_BM_Ret_EX_IPO_SEO_", files)]
 df <- NULL
 for(fl in files_size_BM_ret) df <- rbind(df, fread(fl))
 
-write.csv(df, "./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_BM_Ret.csv", row.names = F)
+write.csv(df, paste0(dir,"Size_BM_Ret_EX_IPO_SEO_.csv"), row.names = F)
 file.remove(files_size_BM_ret)
 
-qt_size <- files[grep("Size_quant", files)]
+qt_size <- files[grep("Size_quant_EX_IPO_SEO_", files)]
 df <- NULL
 for(fl in qt_size) df <- rbind(df, fread(fl))
 
-write.csv(df, "./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/Size_Quant.csv", row.names = F)
+write.csv(df, paste0(dir,"Size_Quant_EX_IPO_SEO.csv"), row.names = F)
 file.remove(qt_size)
 
-qt_BM <- files[grep("BM_quant", files)]
+qt_BM <- files[grep("BM_quant_EX_IPO_SEO_", files)]
 df <- NULL
 for(fl in qt_BM) df <- rbind(df, fread(fl))
 
-write.csv(df, "./IPO review chapter/Chapter write up/SDC-PULL-IPO/Long-Run Returns Variables/BM_Quant.csv", row.names = F)
+write.csv(df, paste0("BM_Quant_EX_IPO_SEO.csv"), row.names = F)
 file.remove(qt_BM)
