@@ -158,13 +158,27 @@ for(cyear in 1972:2015)
   ipo$size_BM_port[ind] <- crsp_cut$size_BM_port[match(ipo$Permno[ind], crsp_cut$PERMNO)] 
   
   crsp_cut <- crsp_cut[!paste(PERMNO, year) %in% flags]
-  ipo$match_size_BM_permno1[ind] <- sapply(ind, match_BM)
+  for(i in ind)
+  {
+    permno <- match_BM(i)
+    crsp_cut <- crsp_cut[!PERMNO %in% permno]
+    ipo$match_size_BM_permno1[i] <- permno
+  }
   
-  crsp_cut <- crsp_cut[!PERMNO %in% ipo$match_size_BM_permno1[ind]]
-  ipo$match_size_BM_permno2[ind] <- sapply(ind, match_BM)
+  for(i in ind)
+  {
+    permno <- match_BM(i)
+    crsp_cut <- crsp_cut[!PERMNO %in% permno]
+    ipo$match_size_BM_permno2[i] <- permno
+  }
   
-  crsp_cut <- crsp_cut[!PERMNO %in% ipo$match_size_BM_permno2[ind]]
-  ipo$match_size_BM_permno3[ind] <- sapply(ind, match_BM)
+  for(i in ind)
+  {
+    permno <- match_BM(i)
+    crsp_cut <- crsp_cut[!PERMNO %in% permno]
+    ipo$match_size_BM_permno3[i] <- permno
+  }
+
 }
 
 
