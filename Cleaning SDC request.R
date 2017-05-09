@@ -1,7 +1,7 @@
 require(data.table)
 require(bit64)
 ### reading first SDC request
-ipo <- read.csv("./IPO review chapter/Chapter write up/Data 20170315/IPO data all.csv")
+ipo <- read.csv("./Projects/IPO review chapter/Chapter write up/Data 20170315/IPO data all.csv")
 ### changing names of the variables
 colnames(ipo) <- c("Filing_date", "Issue_date", "Issuer", "State", "Nation", "Offer_Price",
                    "Type", "Description", "REIT", "Unit", "Depositary", "Deal_number", "CEF", 
@@ -25,7 +25,7 @@ ipo <- ipo[!Type %in% ex_types,]
 
 ### drop REIT, Units, ADR, penny stocks and CEF
 ### 37,692 obs before ---> 27,357 after
-logic <- ipo$REIT == "" & (ipo$Unit == "No"|ipo$Unit == "") & 
+logic <- ipo$REIT == "" & (ipo$Unit == "No" | ipo$Unit == "") & 
          ipo$Depositary == "No" & !is.na(ipo$Offer_Price) & ipo$Offer_Price > 5 & ipo$CEF == "No"
 ipo <- ipo[logic,]
 
@@ -50,7 +50,7 @@ ipo$Permno_ncusip6 <- crsp_monthly$PERMNO[match]
 rm(crsp_monthly)
 ### loading CRSP daily data 
 load("./CRSP_COMP/CRSP_daily_1926_1989.rda")
-load("./CRSP_COMP/CRSP_daily_1990_2015.rda")
+load("./CRSP_COMP/CRSP_daily_1990_2016.rda")
 
 crsp_daily_1989 <- crsp_daily_1989[year(date) >= 1970,]
 crsp <- rbind(crsp_daily_1989, crsp_daily)
@@ -93,4 +93,7 @@ ipo$Permno_ncusip <- NULL
 ipo$Permno_ncusip6 <- NULL
 ipo$dif <- NULL
 
-write.csv(ipo, "./IPO review chapter/Chapter write up/Data 20170315/ipo.csv", row.names = F)
+#ipo <- ipo[!duplicated(Permno)]
+unique <- !duplicated(paste(ipo$Issue_date, ipo$Permno))
+ipo <- ipo[unique]
+write.csv(ipo, "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo.csv", row.names = F)
