@@ -12,12 +12,12 @@
 #############################################
 
 ### I used the file created by the previous code:
-ipo.clean.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo.csv"
-gdp.deflator.data <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/GDPDEF.csv" # taken from https://fred.stlouisfed.org/series/GDPDEF
-fitter.founding.year <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/age7516.csv" # taken from https://site.warrington.ufl.edu/ritter/ipo-data/
-
+ipo.clean.datafile <- "ipo.csv"
+gdp.deflator.data <- "GDPDEF.csv" # taken from https://fred.stlouisfed.org/series/GDPDEF
+fitter.founding.year <- "age7516.csv" # taken from https://site.warrington.ufl.edu/ritter/ipo-data/
+crsp.delist <- "crsp_delist.rds" # file from CRSP.DSFHDR and includes variables: permno, dlstcd, endprc
 ### I will save ipo with with all variables to this file:
-ipo.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo_all_variables.csv"
+ipo.datafile <- "ipo_all_variables.csv"
 ### loading packages:
 require(data.table)
 require(bit64)
@@ -52,7 +52,10 @@ ipo[Proceeds_2016 > 120, size := "L"]
 
 
 #############################################
-###!!!!!!!!!!!! TABLE 1 !!!!!!!!!!!!########
+###!!!!!!!!!!!! TABLE 1 !!!!!!!!!!!!!########
+###!!!!!!!!!!!! Figure 1 !!!!!!!!!!!!########
+###!!!!!!!!!!!! Figure 2 !!!!!!!!!!!!########
+###!!!!!!!!!!!! Figure 3 !!!!!!!!!!!!########
 #############################################
 table1 <- ipo[, list(n = length(Deal_number), IR = mean(IR),
                      ave_proceeds = mean(Proceeds_2016), 
@@ -67,7 +70,8 @@ table1 <- rbind(table1, ipo[, list(n = length(Deal_number), IR = mean(IR),
 
 
 #############################################
-###!!!!!!!!!!!! TABLE 2 !!!!!!!!!!!!########
+###!!!!!!!!!!!! TABLE 2 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 4 !!!!!!!!!!!!########
 #############################################
 table2 <- ipo[, list(n = length(Deal_number),
                      n_s = length(Deal_number[size == "S"]),
@@ -89,6 +93,7 @@ table2 <- rbind(table2, ipo[, list(n = length(Deal_number),
 
 #############################################
 ###!!!!!!!!!!!! TABLE 3 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 5 !!!!!!!!!!!!########
 #############################################
 # checking whether IPO is priced below/within/above the *initial* price range
 # SDC does not have this information prior to March-1983
@@ -153,6 +158,7 @@ table3 <- rbind(table3, ipo[grep("range",Issue_priced_range), list(n = length(De
 
 #############################################
 ###!!!!!!!!!!!! TABLE 4 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 6 !!!!!!!!!!!!########
 #############################################
 ### get data about IPO age from Jay Ritter website
 age <- read.csv(fitter.founding.year)
@@ -192,6 +198,9 @@ table4 <- rbind(table4,
 
 #############################################
 ###!!!!!!!!!!!! TABLE 5 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 7 !!!!!!!!!!!!########
+###!!!!!!!!!!!! Figure 8a !!!!!!!!!!!!#######
+###!!!!!!!!!!!! Figure 8b !!!!!!!!!!!!#######
 #############################################
 ipo[, Gross_spread := as.numeric(as.character(Gross_spread))]
 table5 <- ipo[Year >= 1980, list(n = length(Deal_number),
@@ -203,7 +212,8 @@ table5 <- ipo[Year >= 1980, list(n = length(Deal_number),
                      gs_l =  mean(Gross_spread[size == "L"]/100, na.rm = T)), by = Year]
 
 figure7 <- data.frame(table5$Year, table5$gs_less7, table5$gs_eq7, table5$gs_more7)
-figure8 <- data.frame(table5$Year, table5$gs_s, table5$gs_m, table5$gs_l)
+figure8a <- data.frame(table5$Year, table5$gs_s, table5$gs_m, table5$gs_l)
+
 table5 <- rbind(table5 ,ipo[Year >= 1980, list(n = length(Deal_number),
                                  gs_less7 = mean(Gross_spread < 7, na.rm = T),
                                  gs_eq7 = mean(Gross_spread == 7, na.rm = T),
@@ -213,9 +223,13 @@ table5 <- rbind(table5 ,ipo[Year >= 1980, list(n = length(Deal_number),
                                  gs_l =  mean(Gross_spread[size == "L"], na.rm = T)/100,
                                  Year = "Total")])
 
-
+figure8b <- ipo[Year >= 1980, list(Small_7 = mean(Gross_spread[size == "S"] == 7, na.rm = T),
+                                   Medium_7 = mean(Gross_spread[size == "M"] == 7, na.rm = T),
+                                   Large_7 = mean(Gross_spread[size == "L"] == 7, na.rm = T)), by = Year]
 #############################################
 ###!!!!!!!!!!!! TABLE 6 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 9a !!!!!!!!!!!!#######
+###!!!!!!!!!!!! Figure 9b !!!!!!!!!!!!#######
 #############################################
 ipo[, n_lead := str_count(Mgr_codes,"BM")+str_count(Mgr_codes,"JB")+str_count(Mgr_codes,"JL"), by = Deal_number]
 ipo[, n_co := str_count(Mgr_codes,"CM"), by = Deal_number]
@@ -231,6 +245,8 @@ table6 <- ipo[, list(n = length(Deal_number),
                      n_co_l = mean(n_co[size == "L"], na.rm = T)), by = Year]
 
 figure9a <- data.frame(table6$Year, table6$n_lean, table6$n_co)
+figure9b <- ipo[Year >= 1997, list(n_lean = mean(n_lead, na.rm = T), n_co = mean(n_co, na.rm = T),
+                                   n_syn = mean(n_syn, na.rm = T)), by = Year]
 
 table6 <- rbind(table6, ipo[, list(n = length(Deal_number),
                      n_lean = mean(n_lead, na.rm = T), n_co = mean(n_co, na.rm = T),
@@ -241,13 +257,9 @@ table6 <- rbind(table6, ipo[, list(n = length(Deal_number),
                      n_lean_l = mean(n_lead[size == "L"], na.rm = T), 
                      n_co_l = mean(n_co[size == "L"], na.rm = T), Year = "Total")])
 
-
-figure9b <- ipo[Year >= 1997, list(n_lean = mean(n_lead, na.rm = T), n_co = mean(n_co, na.rm = T),
-                                   n_syn = mean(n_syn, na.rm = T)), by = Year]
-
-
 #############################################
 ###!!!!!!!!!!!! TABLE 7 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 10 !!!!!!!!!!!!#######
 #############################################
 ipo[, Issue_date := as.Date(Issue_date)]
 ipo[, Filing_date := as.Date(Filing_date)]
@@ -266,7 +278,8 @@ table7 <- rbind(table7, ipo[!is.na(rp), list(n = length(Deal_number[!is.na(rp)])
                                rp_l  = mean(rp[!is.na(rp) & size == "L"], na.rm = T),
                                Year = "Total")])
 #############################################
-###!!!!!!!!!!!! FIGURE 12 !!!!!!!!!!!!#######
+###!!!!!!!!!!!! Figure 12a !!!!!!!!!!!!######
+###!!!!!!!!!!!! Figure 12b !!!!!!!!!!!!######
 #############################################
 
 ipo[, First_CRSP_date := as.Date(First_CRSP_date)]
@@ -280,6 +293,7 @@ figure12b <- ipo[, list(n = length(Deal_number)), by = weekday]
 
 #############################################
 ###!!!!!!!!!!!! TABLE 8 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 13 !!!!!!!!!!!!#######
 #############################################
 setkey(ipo, Issue_date)
 table8 <- ipo[Year >= 1980, list(n = length(Deal_number),
@@ -297,38 +311,36 @@ table8 <- rbind(table8, ipo[Year >= 1980, list(n = length(Deal_number),
                                   op_l  = mean(Offer_Price[size == "L"], na.rm = T),
                                   Year = "Total")])
 
-source("./R codes/wrds connect.R") ### program to connect to WRDS in R
-sql <- "select permno, dlstcd, endprc from CRSP.DSFHDR"
-res <- dbSendQuery(wrds, sql)
-delist <- fetch(res, n = -1)
+#############################################
+###!!!!!!!!!!!! TABLE 9 !!!!!!!!!!!!#########
+###!!!!!!!!!!!! Figure 14a !!!!!!!!!!!!######
+###!!!!!!!!!!!! Figure 14b !!!!!!!!!!!!######
+#############################################
+#reading delisting infomation:
+delist <- readRDS(crsp.delist)
 
-match <- match(ipo$Permno, delist$PERMNO)
-ipo$Delist_code <- delist$DLSTCD[match]
-ipo$Delist_date <- delist$ENDPRC[match]
-ipo[, Delist_date := as.Date(Delist_date)]
+m <- match(ipo$Permno, delist$PERMNO)
+ipo[, `:=` (Delist_code = delist$DLSTCD[m], Delist_date = ymd(delist$ENDPRC[m]))]
 
-ipo[, Poor_perf := 0]
-ipo[, Acq := 0]
+ipo[, `:=` (Poor_perf = 0, Acq = 0)]
 ipo[Delist_code >= 400 & Delist_code < 600, Poor_perf := 1]
 ipo[Delist_code >= 200 & Delist_code < 400, Acq := 1]
 
-
-ipo[, ':=' (Poor_perf3 = 0,Poor_perf5 = 0, Poor_perf10 = 0)]
+ipo[, `:=` (Poor_perf3 = 0,Poor_perf5 = 0, Poor_perf10 = 0)]
 ipo[Delist_date - Issue_date < 3*365 & Poor_perf == 1, Poor_perf3 := 1]
 ipo[Delist_date - Issue_date < 5*365 & Poor_perf == 1, Poor_perf5 := 1]
 ipo[Delist_date - Issue_date < 10*365 & Poor_perf == 1, Poor_perf10 := 1]
-today <- as.Date("2016-12-31")
-ipo[today - Issue_date < 3*365, Poor_perf3 := NA]
-ipo[today - Issue_date < 5*365, Poor_perf5 := NA]
-ipo[today- Issue_date < 10*365, Poor_perf10 := NA]
 
-ipo[, ':=' (Acq3 = 0,Acq5 = 0, Acq10 = 0)]
+ipo[, `:=` (Acq3 = 0,Acq5 = 0, Acq10 = 0)]
 ipo[Delist_date - Issue_date < 3*365 & Acq == 1, Acq3 := 1]
 ipo[Delist_date - Issue_date < 5*365 & Acq == 1, Acq5 := 1]
 ipo[Delist_date - Issue_date < 10*365 & Acq == 1, Acq10 := 1]
-ipo[today - Issue_date < 3*365, Acq3 := NA]
-ipo[today - Issue_date < 5*365, Acq5 := NA]
-ipo[today- Issue_date < 10*365, Acq10 := NA]
+
+# here I exclude IPOs in the most recent 3/5/10 years from the stat tables:
+today <- as.Date("2016-12-31")
+ipo[today - Issue_date < 3*365, `:=` (Poor_perf3 = NA, Acq3 = NA)]
+ipo[today - Issue_date < 5*365, `:=` (Poor_perf5 = NA, Acq5 = NA)]
+ipo[today- Issue_date < 10*365, `:=` (Poor_perf10 = NA, Acq10 = NA)]
 
 table9 <- ipo[Year %in% 1973:2013, list(n = length(Deal_number), 
                      del3 = mean(Poor_perf3, na.rm = T),

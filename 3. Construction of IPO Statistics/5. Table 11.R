@@ -16,9 +16,9 @@
 #############################################
 ###!!!!!!!!!!!! README END !!!!!!!!!!!!######
 #############################################
-ipo.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo_all_variables.csv"
-ff.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ffdata.rds"
-crsp_month.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/crsp_monthly.rds"
+ipo.datafile <- "ipo_all_variables.csv"
+ff.datafile <- "ffdata.rds"
+crsp_month.datafile <- "crsp_monthly.rds"
 
 ### loading packages:
 require(data.table)
@@ -110,3 +110,4 @@ stargazer(reg_vw3, type = "text")
 
 stargazer(reg_ew5, type = "text")
 stargazer(reg_vw5, type = "text")
+

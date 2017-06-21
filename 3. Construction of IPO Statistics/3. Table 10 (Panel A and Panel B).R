@@ -19,19 +19,19 @@
 #############################################
 
 ### Path to IPO datafile
-ipo.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo_all_variables.csv"
+ipo.datafile <- "ipo_all_variables.csv"
 ### Path to CRSP file 
-crsp.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/crsp_info.rds"
+crsp.datafile <- "crsp_info.rds"
 ### Path to CRSP/Compustat merged file
-comp.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/compustat.rds"
+comp.datafile <- "compustat.rds"
 ### FF size and book to market portfolio breakpoint and portfolio returns (all companies)
-size.breaks <- "./CRSP_COMP/ME_Breakpoints.CSV" # taken from Kenneth French website
-bm.breaks <- "./CRSP_COMP/BE-ME_Breakpoints.CSV"  # taken from Kenneth French website
-size_bm.returns <- "./CRSP_COMP/25_Portfolios_5x5_Daily.CSV" # taken from Kenneth French website
+size.breaks <- "ME_Breakpoints.CSV" # taken from Kenneth French website
+bm.breaks <- "BE-ME_Breakpoints.CSV"  # taken from Kenneth French website
+size_bm.returns <- "25_Portfolios_5x5_Daily.CSV" # taken from Kenneth French website
 
 ### FF size and book to market portfolio breakpoint and portfolio returns (EXCLUDING RECENT IPOs)
-size_bm_noipo.breaks <- "./CRSP_COMP/FF 25 portfolio breakpoints without IPO firms 20170504.csv" # manually constructed
-size_bm_noipo.returns <- "./CRSP_COMP/FF 25 portfolio without IPO firms 20170504.csv" # manually constructed
+size_bm_noipo.breaks <- "FF 25 portfolio breakpoints without IPO firms 20170504.csv" # manually constructed
+size_bm_noipo.returns <- "FF 25 portfolio without IPO firms 20170504.csv" # manually constructed
 
 ### loading packages:
 require(data.table)

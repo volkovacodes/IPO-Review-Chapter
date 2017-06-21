@@ -11,13 +11,13 @@
 ###!!!!!!!!!!!! README END !!!!!!!!!!!!######
 #############################################
 
-### path to the file file "ditry" with IPO data
-ipo.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/IPO data all.csv"
+###  file "ditry" with IPO data
+ipo.datafile <- "IPO data all.csv"
 ### path to the file with CRSP data (I use .rds format for faster reading)
-crsp.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/crsp.rds"
+crsp.datafile <- "crsp.rds"
 
 ### I will write results to this file:
-ipo.clean.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo.csv"
+ipo.clean.datafile <- "ipo.csv"
 
 ### loading packages:
 require(data.table)

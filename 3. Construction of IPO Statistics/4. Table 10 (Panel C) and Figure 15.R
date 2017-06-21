@@ -19,11 +19,11 @@
 #############################################
 
 ### Path to IPO datafile
-ipo.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/ipo_all_variables.csv"
+ipo.datafile <- "ipo_all_variables.csv"
 ### Path to CRSP file 
-crsp.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/crsp_info.rds"
+crsp.datafile <- "crsp_info.rds"
 ### Path to CRSP/Compustat merged file
-comp.datafile <- "./Projects/IPO review chapter/Chapter write up/Data 20170315/compustat.rds"
+comp.datafile <- "compustat.rds"
 
 ### loading packages:
 require(data.table)
@@ -207,6 +207,7 @@ for(cyear in 1973:2013)
 
 figure15c <- ipo[Year %in% 1973:2013, list(mean_ret3 = mean(snp1500_BH3, na.rm = T), half_df = 0.5*sd(snp1500_BH3, na.rm = T)), by = Year]
 
+write.csv(ipo, ipo.datafile)
 export <- function(x)
 {
   clip <- pipe("pbcopy", "w") 
