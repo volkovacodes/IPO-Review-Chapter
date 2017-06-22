@@ -1,6 +1,6 @@
 # SDC-PULL-IPO
 This directory explains in details how to extract IPO data from SDC Platinum database, match it with CRSP and produce main statistics.
-These codes and the final data sample is used in Lowry, Michaely and Volkova, "Initial Public Offering: A Synthesis of the Literature and Directions for Future Research" (2017), avaliable at https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2912354
+These codes and the final data sample is used in Lowry, Michelle, Roni Michaely, and Ekaterina Volkova, 2017, "Initial public offering: A synthesis of the literature and directions for future research", in Foundations and Trends in Finance (working paper avaliable at https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2912354)
 
 
 **1. Pull IPO Data from SDC**
