@@ -21,7 +21,7 @@
 ### Path to IPO datafile
 ipo.datafile <- "ipo_all_variables.csv"
 ### Path to CRSP file 
-crsp.datafile <- "crsp_info.rds"
+crsp.datafile <- "crsp.rds"
 ### Path to CRSP/Compustat merged file
 comp.datafile <- "compustat.rds"
 ### FF size and book to market portfolio breakpoint and portfolio returns (all companies)
@@ -109,7 +109,7 @@ crsp[, `:=` (month = month(date), day = day(date))]
 crsp_yearend <- crsp[month == 12]
 m <- match(crsp_yearend$PERMNO, ipo$Permno)
 crsp_yearend$ipo_year <- ipo$Year[m]
-crsp_yearend <- crsp_yearend [year(date) == ipo_year]
+crsp_yearend <- crsp_yearend[year(date) == ipo_year]
 crsp_yearend[, day_till_year_end := 31 - day]
 setkey(crsp_yearend, PERMNO, day_till_year_end)
 m <- match(ipo$Permno, crsp_yearend$PERMNO)

@@ -21,7 +21,8 @@
 ### Path to IPO datafile
 ipo.datafile <- "ipo_all_variables.csv"
 ### Path to CRSP file 
-crsp.datafile <- "crsp_info.rds"
+crsp.datafile <- "crsp.rds"
+crsp.info <- "crsp_info.csv"
 ### Path to CRSP/Compustat merged file
 comp.datafile <- "compustat.rds"
 
@@ -42,6 +43,10 @@ crsp[, `:=` (year = year(date), month = month(date), day = day(date))]
 crsp[month == 12, day_til_yearend := 31 - day]
 print(Sys.time())
 
+crsp_info <- read.csv(crsp.info)
+m <- match(crsp$PERMNO, crsp_info$PERMNO)
+crsp$EXCHCD <- crsp_info$HEXCD[m]
+crsp$SHRCD <- crsp_info$HSHRCD[m]
 ### Loading Compustat data:
 compustat <- readRDS(comp.datafile)
 calculate_book_value <- function(comp) # calculating book value
@@ -218,4 +223,4 @@ export(table10c)
 export(figure15a)
 export(figure15b)
 export(figure15c)
-View(ipo)
+

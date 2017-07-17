@@ -15,7 +15,7 @@
 ipo.clean.datafile <- "ipo.csv"
 gdp.deflator.data <- "GDPDEF.csv" # taken from https://fred.stlouisfed.org/series/GDPDEF
 fitter.founding.year <- "age7516.csv" # taken from https://site.warrington.ufl.edu/ritter/ipo-data/
-crsp.delist <- "crsp_delist.rds" # file from CRSP.DSFHDR and includes variables: permno, dlstcd, endprc
+crsp.info.datafile <- "crsp_info.csv" # file from CRSP.DSFHDR and includes variables: permno, dlstcd, endprc
 ### I will save ipo with with all variables to this file:
 ipo.datafile <- "ipo_all_variables.csv"
 ### loading packages:
@@ -82,7 +82,7 @@ table2 <- ipo[, list(n = length(Deal_number),
                      IR_l = mean(IR[size == "L"], na.rm = T)), by = Year]
 
 figure4 <- table2[Year >= 1980]
-
+figure4$n <- NULL
 table2 <- rbind(table2, ipo[, list(n = length(Deal_number),
            n_s = length(Deal_number[size == "S"]),
            n_m = length(Deal_number[size == "M"]),
@@ -270,7 +270,7 @@ table7 <- ipo[!is.na(rp), list(n = length(Deal_number[!is.na(rp)]),
                           rp_m  = mean(rp[!is.na(rp) & size == "M"], na.rm = T),
                           rp_l  = mean(rp[!is.na(rp) & size == "L"], na.rm = T)), by = Year]
 
-figure10 <- data.frame(table7$Year, table7$n, table7$rp)
+figure10 <- data.frame(table7$Year, table7$rp, table7$n)
 table7 <- rbind(table7, ipo[!is.na(rp), list(n = length(Deal_number[!is.na(rp)]),
                                rp  = mean(rp[!is.na(rp)], na.rm = T),
                                rp_s  = mean(rp[!is.na(rp) & size == "S"], na.rm = T),
@@ -317,10 +317,10 @@ table8 <- rbind(table8, ipo[Year >= 1980, list(n = length(Deal_number),
 ###!!!!!!!!!!!! Figure 14b !!!!!!!!!!!!######
 #############################################
 #reading delisting infomation:
-delist <- readRDS(crsp.delist)
+crsp.info <- fread(crsp.info.datafile, select = c("PERMNO", "ENDPRC", "DLSTCD"))
 
-m <- match(ipo$Permno, delist$PERMNO)
-ipo[, `:=` (Delist_code = delist$DLSTCD[m], Delist_date = ymd(delist$ENDPRC[m]))]
+m <- match(ipo$Permno, crsp.info$PERMNO)
+ipo[, `:=` (Delist_code = crsp.info$DLSTCD[m], Delist_date = ymd(crsp.info$ENDPRC[m]))]
 
 ipo[, `:=` (Poor_perf = 0, Acq = 0)]
 ipo[Delist_code >= 400 & Delist_code < 600, Poor_perf := 1]
