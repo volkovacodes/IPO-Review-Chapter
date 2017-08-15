@@ -39,11 +39,7 @@ ipo <- as.data.table(ipo)
 ### In our sample SDC report consisnt of 43817 obs
 
 ### keep only IPOs
-<<<<<<< HEAD
 ### 43,817 obs ---> 16,454
-=======
-### 43.817 obs -> 16,454
->>>>>>> origin/master
 ipo <- ipo[IPO_Flag != "No" & Original_IPO_Flag != "No"]
 ### format dates
 ipo[, `:=`(Filing_date = mdy(Filing_date), Issue_date = mdy(Issue_date))]
@@ -53,11 +49,7 @@ ipo[, Offer_Price := gsub(",","", Offer_Price)]
 ipo[, Offer_Price := as.numeric(as.character(Offer_Price))]
 
 ### types of securities we will keep in the data (common/ordinary shares)
-<<<<<<< HEAD
 ### 16,454 obs before ---> 15,107 obs after
-=======
-### 15,454 obs before ---> 15,107 obs after
->>>>>>> origin/master
 ### Comment: sometimes Ritter codes "MLP-Common Shs" as units =1
 ex_types <- c("Units", "Ltd Prtnr Int", "MLP-Common Shs", "Shs Benficl Int",
              "Ltd Liab Int", "Stock Unit", "Trust Units", "Beneficial Ints")
@@ -102,12 +94,8 @@ ipo[(dif >= -1 & dif <= 7) & (Permno == - 999) & !is.na(dif), Permno := Permno_n
 ipo[, dif := n(First_CRSP_date_ncusip6 - Issue_date)]
 ipo[ (dif >= -1 & dif <= 7) & (Permno == - 999) & !is.na(dif), Permno := Permno_ncusip6]
 
-<<<<<<< HEAD
-### Dropping non-match companies
-=======
 ### Dropping non-match companies and duplicated
 ### (Duplicates usually happen when Units and Common Stocks are offered at the same time)
->>>>>>> origin/master
 ### 11,103 obs ---> 8,995 obs
 ipo <- ipo[!(Permno == -999)]
 ipo <- ipo[!duplicated(ipo$Permno)]
@@ -128,6 +116,4 @@ crsp.info <- fread(crsp.info.datafile, select = c("PERMNO", "HSHRCD", "HEXCD"))
 m <- match(ipo$Permno, crsp.info$PERMNO)
 ipo[, `:=` (exch = crsp.info$HEXCD[m], shrcd = crsp.info$HSHRCD[m])]
 
-### 8,821 obs ---> 8,770
-ipo <- ipo[exch %in% 1:3 & shrcd %in% 10:19]
 write.csv(ipo, ipo.clean.datafile, row.names = F)
