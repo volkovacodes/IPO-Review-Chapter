@@ -107,7 +107,7 @@ ipo[, Issue_priced_range := "NA"]
 # info from LFILE/HFILE variables
 ipo[Year >= 1983 & Low_Price  != "", constructed_low  := n(gsub(",", "", Low_Price))]
 ipo[Year >= 1983 & High_Price != "", constructed_high := n(gsub(",", "", High_Price))]
-# info from AH_LFILE/AH_HFILE (ammendment price history list) variables
+# info from AH_LFILE/AH_HFILE (amendment price history list) variables
 first_price <- function(a)
 {
   prices <- strsplit(as.character(a), split = "\n")

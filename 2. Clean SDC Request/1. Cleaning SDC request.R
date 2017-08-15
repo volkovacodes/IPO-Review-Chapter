@@ -36,7 +36,7 @@ colnames(ipo) <- c("Filing_date", "Issue_date", "Issuer", "State", "Nation","IPO
 ipo <- as.data.table(ipo)
 
 ### keep only IPOs
-### 40,695 obs -> 14,589
+### 43,817 obs ---> 16,454
 ipo <- ipo[IPO_Flag != "No" & Original_IPO_Flag != "No"]
 ### format dates
 ipo[, `:=`(Filing_date = mdy(Filing_date), Issue_date = mdy(Issue_date))]
@@ -46,14 +46,14 @@ ipo[, Offer_Price := gsub(",","", Offer_Price)]
 ipo[, Offer_Price := as.numeric(as.character(Offer_Price))]
 
 ### types of securities we will keep in the data (common/ordinary shares)
-### 14,589 obs before ---> 13,956 obs after
+### 16,454 obs before ---> 15,107 obs after
 ### Comment: sometimes Ritter codes "MLP-Common Shs" as units =1
 ex_types <- c("Units", "Ltd Prtnr Int", "MLP-Common Shs", "Shs Benficl Int",
              "Ltd Liab Int", "Stock Unit", "Trust Units", "Beneficial Ints")
 ipo <- ipo[!Type %in% ex_types,]
 
 ### drop REIT, Units, ADR, penny stocks and CEF
-### 13,956 obs before ---> 10,645 obs after
+### 15,107 obs before ---> 11,103 obs after
 logic <- ipo$REIT == "" & (ipo$Unit == "No" | ipo$Unit == "") &  ipo$Depositary == "No" & 
   !is.na(ipo$Offer_Price) & ipo$Offer_Price >= 5 & 
   ipo$CEF == "No" 
@@ -92,7 +92,7 @@ ipo[, dif := n(First_CRSP_date_ncusip6 - Issue_date)]
 ipo[ (dif >= -1 & dif <= 7) & (Permno == - 999) & !is.na(dif), Permno := Permno_ncusip6]
 
 ### Dropping non-match companies
-### 10,654 obs ---> 9,822 obs
+### 11,103 obs ---> 8,995 obs
 ipo <- ipo[!(Permno == -999)]
 
 m <- match(ipo$Permno, crsp$PERMNO)
