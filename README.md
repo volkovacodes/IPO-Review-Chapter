@@ -2,7 +2,8 @@
 This directory explains in details how to extract IPO data from SDC Platinum database, match it with CRSP and produce main statistics.
 These codes and the final data sample is used in Lowry, Michelle, Roni Michaely, and Ekaterina Volkova, 2017, "Initial public offering: A synthesis of the literature and directions for future research", in Foundations and Trends in Finance (working paper avaliable at https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2912354)
 
-**!!Before going over the codes the the file 1. IPO Online Appendix.pdf !!**
+## **!!Before going over the codes the the file 1. IPO Online Appendix.pdf !!**
+
 This file provides extensive explanation of the data collection and cleaning. 
 The file explains objective of each step in the data cleaning process. While this file mostly uses R code for references we've tried to provide detailed textual explanation of each step for non-R users as well.
 
